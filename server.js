@@ -1,48 +1,55 @@
 //*********************
 // DEPENDENCIES/MODELS
 //*********************
-var express = require("express");
-var logger = require("morgan");
 var mongoose = require("mongoose");
-var exphbs = require("express-handlebars");
+var logger = require("morgan");
 
 //*********************
 // INITIALISE EXPRESS + PORT
 //*********************
+var express = require("express");
+var exphbs = require("express-handlebars");
+
 var app = express();
 var PORT = process.env.PORT || 3000;
 
 // *********************
 // SCRAPING TOOLS
 // *********************
-var axios = require("axios");
-var cheerio = require("cheerio");
+// var axios = require("axios");
+// var cheerio = require("cheerio");
 
-// app.use(express.static(process.cwd() + "/public"));
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(logger("dev"));
+app.use(express.urlencoded({ extended: false }));
+
+// Make public a static folder
+app.use(express.static(process.cwd() + "/public"));
+// app.use(express.static("public"));
+
+//HANDLEBARS
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
-// Make public a static folder
-app.use(express.static("public"));
 
 
-// var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
-// mongoose.connect(MONGODB_URI);
 
-mongoose.connect("mongodb://localhost/PLACEDATABASEHERE");
-
+//CONNECTING TO MONGODB
+// mongoose.connect("mongodb://localhost/{PUTSOMETHINGHERE}");
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/Mongoose-Cheerios";
+mongoose.connect(MONGODB_URI, { userNewUrlParser: true });
 
 var db = mongoose.connection;
 
-db.on("error", function(error) {
-  console.log("Database Error:", error);
+db.on("error", function (err) {
+  console.log("Database Error:", err);
 });
-db.once("open", function(){
+db.once("open", function () {
   console.log("Connected to Mongoose!");
 });
+
+
+//ROUTES
+// var routes = require("./controller/controller");
+// app.use("/", routes);
 
 app.listen(PORT, function () {
   // Log (server-side) when our server has started
