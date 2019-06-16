@@ -1,21 +1,40 @@
-// DEPENDENCIES
-//*************
+//*********************
+// DEPENDENCIES/MODELS
+//*********************
 var express = require("express");
-var exphbs = require("express-handlebars");
+var logger = require("morgan");
 var mongoose = require("mongoose");
+var exphbs = require("express-handlebars");
+
+//*********************
+// INITIALISE EXPRESS + PORT
+//*********************
 var app = express();
 var PORT = process.env.PORT || 3000;
 
-app.use(express.static(process.cwd() + "/public"));
+// *********************
+// SCRAPING TOOLS
+// *********************
+var axios = require("axios");
+var cheerio = require("cheerio");
 
+// app.use(express.static(process.cwd() + "/public"));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(logger("dev"));
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
+// Make public a static folder
+app.use(express.static("public"));
 
 
 // var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 // mongoose.connect(MONGODB_URI);
 
-mongoose.connect("mongodb://localhost/scraped_news");
+mongoose.connect("mongodb://localhost/PLACEDATABASEHERE");
+
+
 var db = mongoose.connection;
 
 db.on("error", function(error) {
