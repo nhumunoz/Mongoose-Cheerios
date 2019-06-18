@@ -2,24 +2,24 @@
 //DEPENDENCIES
 //*************************
 var express = require("express");
-var app = express();
+var router = express.Router();
 var path = require("path");
 
 var axios = require("axios");
 var cheerio = require("cheerio");
 
-var Note = require("../models/Note");
-var Article = require("../models/Articles");
+var Note = require("../models/Note.js");
+var Article = require("../models/Articles.js");
 
 
 //************************
 // ROUTES
 //************************
-app.get("/", function (req, res) {
+router.get("/", function (req, res) {
   res.redirect("/articles");
 });
 
-app.get("/scrape", function (req, res) {
+router.get("/scrape", function (req, res) {
   axios("https://www.climbing.com/", function (err, res, html) {
     var $ = cheerio.load(html);
     var titlesArray = [];
@@ -63,7 +63,7 @@ app.get("/scrape", function (req, res) {
   });
 });
 
-app.get("/articles", function (req, res) {
+router.get("/articles", function (req, res) {
   Article.find()
     .sort({ _id: -1 })
     .exec(function (err, doc) {
@@ -76,7 +76,7 @@ app.get("/articles", function (req, res) {
     });
 });
 
-app.get("/articles-json", function (req, res) {
+router.get("/articles-json", function (req, res) {
   Article.find({}, function (err, doc) {
     if (err) {
       console.log(err);
@@ -86,7 +86,7 @@ app.get("/articles-json", function (req, res) {
   });
 });
 
-app.get("/clearAll", function (req, res) {
+router.get("/clearAll", function (req, res) {
   if (res) {
     console.log(res);
   } else {
@@ -95,7 +95,7 @@ app.get("/clearAll", function (req, res) {
   res.redirect("/articles-json");
 });
 
-app.get("/readArticle/:id", function (req, res) {
+router.get("/readArticle/:id", function (req, res) {
   var articleId = req.params.id;
   var hbsObj = {
     article: [],
@@ -127,7 +127,7 @@ app.get("/readArticle/:id", function (req, res) {
     });
 });
 
-app.post("/note/:id", function (req, res) {
+router.post("/note/:id", function (req, res) {
   var user = req.body.name;
   var content = req.body.note;
   var articleId = req.params.id;
@@ -164,4 +164,4 @@ app.post("/note/:id", function (req, res) {
 //************************
 // EXPORT MODELS
 //************************
-module.exports = app;
+module.exports = router;
