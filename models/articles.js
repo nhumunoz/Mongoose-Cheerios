@@ -16,7 +16,7 @@ var ArticleSchema = new Schema({
     type: String,
     required: true
   },
-  note: [
+  Note: [
     {
       type: Schema.Types.ObjectId,
       ref: "Note"
@@ -24,8 +24,8 @@ var ArticleSchema = new Schema({
   ]
 });
 
-var Article = mongoose.model("Article", ArticleSchema);
+var Articles = mongoose.model("Articles", ArticleSchema);
 //*************************
 // EXPORT ARTICLE
 //*************************
-module.exports = Article;
+module.exports = Articles;

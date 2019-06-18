@@ -8,7 +8,7 @@ var path = require("path");
 var axios = require("axios");
 var cheerio = require("cheerio");
 
-var Note = require("../models/Notes.js");
+var Note = require("../models/Note.js");
 var Articles = require("../models/Articles.js");
 
 
