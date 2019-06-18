@@ -8,7 +8,7 @@ var path = require("path");
 var axios = require("axios");
 var cheerio = require("cheerio");
 
-var Note = require("../models/Note.js");
+var Note = require("../models/Notes.js");
 var Articles = require("../models/Articles.js");
 
 
@@ -103,7 +103,7 @@ app.get("/readArticle/:id", function (req, res) {
   };
 
   Articles.findOne({ _id: articleId })
-    .populate("note")
+    .populate("Note")
     .exec(function (err, doc) {
       if (err) {
         console.log("Error: " + err);
@@ -129,7 +129,7 @@ app.get("/readArticle/:id", function (req, res) {
 
 app.post("/Note/:id", function (req, res) {
   var user = req.body.name;
-  var content = req.body.note;
+  var content = req.body.Note;
   var articleId = req.params.id;
 
   var noteObj = {
@@ -148,7 +148,7 @@ app.post("/Note/:id", function (req, res) {
 
       Articles.findOneAndUpdate(
         { _id: req.params.id },
-        { $push: { note: doc._id } },
+        { $push: { Note: doc._id } },
         { new: true }
       ).exec(function (err, doc) {
         if (err) {
