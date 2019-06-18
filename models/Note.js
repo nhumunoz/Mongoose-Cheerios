@@ -11,11 +11,11 @@ var Schema = mongoose.Schema;
 
 var NoteSchema = new Schema({
   name: {
-    type: String,
+    type: String
   },
   body: {
     type: String,
-    // required: true
+    required: true
   }
 });
 

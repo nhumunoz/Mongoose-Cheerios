@@ -1,12 +1,11 @@
 //*************************
 //DEPENDENCIES
 //*************************
-
 var express = require("express");
-var router = express.Router();
+var app = express();
 var path = require("path");
 
-var request = require("request");
+var axios = require("axios");
 var cheerio = require("cheerio");
 
 var Note = require("../models/Note");
@@ -16,16 +15,16 @@ var Article = require("../models/Articles");
 //************************
 // ROUTES
 //************************
-router.get("/", function (req, res) {
+app.get("/", function (req, res) {
   res.redirect("/articles");
 });
 
-router.get("/scrape", function (req, res) {
-  request("#-PLACE URL HERE", function (err, res, html) {
+app.get("/scrape", function (req, res) {
+  axios("https://www.theverge.com/", function (err, res, html) {
     var $ = cheerio.load(html);
     var titlesArray = [];
 
-    $("GRAB CLASS IN HANDLEBARS").each(function (i, element) {
+    $(".c-entry-box--compact__title").each(function (i, element) {
       var result = {};
 
       result.title = $(this)
@@ -56,7 +55,7 @@ router.get("/scrape", function (req, res) {
           console.log("Article already exists!");
         }
       } else {
-        console.log("Note saved to DB, missing data");
+        console.log("Note saved to DB, but missing data!");
       }
 
     });
@@ -64,7 +63,7 @@ router.get("/scrape", function (req, res) {
   });
 });
 
-router.get("/articles", function (req, res) {
+app.get("/articles", function (req, res) {
   Article.find()
     .sort({ _id: -1 })
     .exec(function (err, doc) {
@@ -77,7 +76,7 @@ router.get("/articles", function (req, res) {
     });
 });
 
-router.get("/articles-json", function (req, res) {
+app.get("/articles-json", function (req, res) {
   Article.find({}, function (err, doc) {
     if (err) {
       console.log(err);
@@ -87,17 +86,17 @@ router.get("/articles-json", function (req, res) {
   });
 });
 
-router.get("/clearAll", function (req, res) {
-  if (err) {
-    console.log(err);
+app.get("/clearAll", function (req, res) {
+  if (res) {
+    console.log(res);
   } else {
     console.log("Removed all articles!");
   }
   res.redirect("/articles-json");
 });
 
-router.get("/readArticle/:id", function (req, res) {
-  var articleID = req.params.id;
+app.get("/readArticle/:id", function (req, res) {
+  var articleId = req.params.id;
   var hbsObj = {
     article: [],
     body: []
@@ -107,16 +106,16 @@ router.get("/readArticle/:id", function (req, res) {
     .populate("note")
     .exec(function (err, doc) {
       if (err) {
-        console.log("Error:" + err);
+        console.log("Error: " + err);
       } else {
         hbsObj.article = doc;
         var link = doc.link;
-        request(link, function (err, res, html) {
+        axios(link, function (err, res, html) {
           var $ = cheerio.load(html);
 
-          $("CLASS ID ADD HITHER").each(function (i, element) {
+          $(".l-col__main").each(function (i, element) {
             hbsObj.body = $(this)
-              .children(".CLASS CODE")
+              .children(".c-centry-content")
               .children("p")
               .text();
 
@@ -128,17 +127,17 @@ router.get("/readArticle/:id", function (req, res) {
     });
 });
 
-router.post("/note/:id", function (req, res) {
+app.post("/note/:id", function (req, res) {
   var user = req.body.name;
   var content = req.body.note;
-  var articleID = req.params.id;
+  var articleId = req.params.id;
 
   var noteObj = {
     name: user,
     body: content
   };
 
-  var newComment = new Note(noteObj);
+  var newNote = new Note(noteObj);
 
   newNote.save(function (err, doc) {
     if (err) {
@@ -165,4 +164,4 @@ router.post("/note/:id", function (req, res) {
 //************************
 // EXPORT MODELS
 //************************
-module.exports = router;
+module.exports = app;

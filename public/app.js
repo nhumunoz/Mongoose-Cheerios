@@ -8,7 +8,7 @@ $.getJSON("/articles", function (data) {
 $(document).on("click", "p", function () {
   $("#notes").empty();
 
-  var thisID = $(this).attr("data-id");
+  var thisId = $(this).attr("data-id");
 
   $.ajax({
     method: "GET",
@@ -29,7 +29,7 @@ $(document).on("click", "p", function () {
 });
 
 $(document).on("click", "#savenote", function () {
-  var thisID = $(this).attr("data-id");
+  var thisId = $(this).attr("data-id");
 
   $.ajax({
     method: "POST",
