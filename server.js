@@ -13,6 +13,10 @@ var app = express();
 
 var PORT = process.env.PORT || 3000;
 
+//ROUTES
+var routes = require("./controller/controller");
+app.use("/", routes);
+
 // *********************
 // SCRAPING TOOLS
 // *********************
@@ -36,7 +40,7 @@ app.set("view engine", "handlebars");
 
 //CONNECTING TO MONGODB
 // mongoose.connect("mongodb://localhost/{PUTSOMETHINGHERE}");
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/vergeToScrape";
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 mongoose.connect(MONGODB_URI, { userNewUrlParser: true });
 
 var db = mongoose.connection;
@@ -46,9 +50,6 @@ db.once("open", function () {
   console.log("Connected to Mongoose!");
 });
 
-//ROUTES
-var routes = require("./controller/controller");
-app.use("/", routes);
 
 //LOCALHOST PORT
 app.listen(PORT, function () {

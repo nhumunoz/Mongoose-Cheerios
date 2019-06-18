@@ -20,7 +20,7 @@ app.get("/", function (req, res) {
 });
 
 app.get("/scrape", function (req, res) {
-  axios("https://www.theverge.com/", function (err, res, html) {
+  axios("https://www.climbing.com/", function (err, res, html) {
     var $ = cheerio.load(html);
     var titlesArray = [];
 

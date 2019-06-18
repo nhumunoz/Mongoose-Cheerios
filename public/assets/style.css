@@ -1,0 +1,49 @@
+body {
+  background-size: 600px;
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size: 16px;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+.articleBody {
+  height: 200px;
+  font-size: 20px;
+  overflow-y: scroll;
+  line-height: 150%;
+}
+
+.btnSignUp {
+  background-color: #635f60;
+}
+
+#nameNote {
+  font-weight: bold;
+  background: grey;
+  color: white;
+}
+
+.input-field input {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+
+.input-field input[type="text"]:focus {
+  border-bottom: 1px solid salmon;
+}
+
+footer {
+  text-align: center;
+  align-content: center;
+  align-items: center;
+}
+
