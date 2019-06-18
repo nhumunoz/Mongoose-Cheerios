@@ -2,6 +2,6 @@
 // EXPORT MODELS
 //************************
 module.exports = {
-  Article: require("./Article"),
+  Articles: require("./Articles"),
   Note: require("./Note")
 };

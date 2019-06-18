@@ -2,24 +2,24 @@
 //DEPENDENCIES
 //*************************
 var express = require("express");
-var router = express.Router();
+var app = express();
 var path = require("path");
 
 var axios = require("axios");
 var cheerio = require("cheerio");
 
 var Note = require("../models/Note.js");
-var Article = require("../models/Articles.js");
+var Articles = require("../models/Articles.js");
 
 
 //************************
 // ROUTES
 //************************
-router.get("/", function (req, res) {
-  res.redirect("/articles");
+app.get("/", function (req, res) {
+  res.redirect("/Articles");
 });
 
-router.get("/scrape", function (req, res) {
+app.get("/scrape", function (req, res) {
   axios("https://www.climbing.com/", function (err, res, html) {
     var $ = cheerio.load(html);
     var titlesArray = [];
@@ -38,9 +38,9 @@ router.get("/scrape", function (req, res) {
         if (titlesArray.indexOf(result.title) == -1) {
           titlesArray.push(result.title);
 
-          Article.count({ title: result.title }, function (err, test) {
+          Articles.count({ title: result.title }, function (err, test) {
             if (test === 0) {
-              var entry = new Article(result);
+              var entry = new Articles(result);
 
               entry.save(function (err, doc) {
                 if (err) {
@@ -63,21 +63,21 @@ router.get("/scrape", function (req, res) {
   });
 });
 
-router.get("/articles", function (req, res) {
-  Article.find()
+app.get("/Articles", function (req, res) {
+  Articles.find()
     .sort({ _id: -1 })
     .exec(function (err, doc) {
       if (err) {
         console.log(err);
       } else {
-        var artcl = { article: doc };
+        var artcl = { Article: doc };
         res.render("index", artcl);
       }
     });
 });
 
-router.get("/articles-json", function (req, res) {
-  Article.find({}, function (err, doc) {
+app.get("/Articles-json", function (req, res) {
+  Articles.find({}, function (err, doc) {
     if (err) {
       console.log(err);
     } else {
@@ -86,29 +86,29 @@ router.get("/articles-json", function (req, res) {
   });
 });
 
-router.get("/clearAll", function (req, res) {
+app.get("/clearAll", function (req, res) {
   if (res) {
     console.log(res);
   } else {
     console.log("Removed all articles!");
   }
-  res.redirect("/articles-json");
+  res.redirect("/Articles-json");
 });
 
-router.get("/readArticle/:id", function (req, res) {
+app.get("/readArticle/:id", function (req, res) {
   var articleId = req.params.id;
   var hbsObj = {
-    article: [],
+    articles: [],
     body: []
   };
 
-  Article.findOne({ _id: articleId })
+  Articles.findOne({ _id: articleId })
     .populate("note")
     .exec(function (err, doc) {
       if (err) {
         console.log("Error: " + err);
       } else {
-        hbsObj.article = doc;
+        hbsObj.Articles = doc;
         var link = doc.link;
         axios(link, function (err, res, html) {
           var $ = cheerio.load(html);
@@ -119,7 +119,7 @@ router.get("/readArticle/:id", function (req, res) {
               .children("p")
               .text();
 
-            res.render("article", hbsObj);
+            res.render("Article", hbsObj);
             return false;
           });
         });
@@ -127,7 +127,7 @@ router.get("/readArticle/:id", function (req, res) {
     });
 });
 
-router.post("/note/:id", function (req, res) {
+app.post("/Note/:id", function (req, res) {
   var user = req.body.name;
   var content = req.body.note;
   var articleId = req.params.id;
@@ -146,7 +146,7 @@ router.post("/note/:id", function (req, res) {
       console.log(doc._id);
       console.log(articleId);
 
-      Article.findOneAndUpdate(
+      Articles.findOneAndUpdate(
         { _id: req.params.id },
         { $push: { note: doc._id } },
         { new: true }
@@ -164,4 +164,4 @@ router.post("/note/:id", function (req, res) {
 //************************
 // EXPORT MODELS
 //************************
-module.exports = router;
+module.exports = app;
