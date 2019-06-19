@@ -16,7 +16,7 @@ var Articles = require("../models/Articles.js");
 // ROUTES
 //************************
 app.get("/", function (req, res) {
-  res.redirect("/Articles");
+  res.redirect("/Article");
 });
 
 app.get("/scrape", function (req, res) {
@@ -63,20 +63,20 @@ app.get("/scrape", function (req, res) {
   });
 });
 
-app.get("/Articles", function (req, res) {
+app.get("/Article", function (req, res) {
   Articles.find()
     .sort({ _id: -1 })
     .exec(function (err, doc) {
       if (err) {
         console.log(err);
       } else {
-        var artcl = { Article: doc };
+        var artcl = { Articles: doc };
         res.render("index", artcl);
       }
     });
 });
 
-app.get("/Articles-json", function (req, res) {
+app.get("/Article-json", function (req, res) {
   Articles.find({}, function (err, doc) {
     if (err) {
       console.log(err);
@@ -87,18 +87,21 @@ app.get("/Articles-json", function (req, res) {
 });
 
 app.get("/clearAll", function (req, res) {
-  if (res) {
-    console.log(res);
-  } else {
-    console.log("Removed all articles!");
-  }
-  res.redirect("/Articles-json");
+  Articles.remove({}, function (err, doc) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("Removed all articles!");
+    }
+    
+  })
+  res.redirect("/Article-json");
 });
 
 app.get("/readArticle/:id", function (req, res) {
   var articleId = req.params.id;
   var hbsObj = {
-    articles: [],
+    Articles: [],
     body: []
   };
 
